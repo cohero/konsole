@@ -8,6 +8,38 @@ namespace Konsole.Tests.WindowTests
     [UseReporter(typeof(DiffReporter))]
     public class WriteShould
     {
+        [Test]
+        public void when_write_ends_exactly_at_end_of_line_should_move_cursor_to_next_line()
+        {
+            //var con = new MockConsole(6, 3);
+            //con.Write("123");
+            //con.CursorLeft.Should().Be(3);
+            //con.CursorTop.Should().Be(0);
+            //con.Write("456");
+            //con.CursorLeft.Should().Be(0);
+            //con.CursorTop.Should().Be(1);
+            //con.Write("ABCDE");
+            //con.Write("1234");
+            //var expected = new[]
+            //{
+            //    "123456",
+            //    "ABCDE1",
+            //    "234   "
+            //};
+            //con.Buffer.Should().BeEquivalentTo(expected);
+
+            var con = new MockConsole(6, 3);
+            con.Write("123456");
+            con.Write("ABCDEF");
+            con.Write("XY    ");
+            var expected = new[]
+            {
+                "123456",
+                "ABCDEF",
+                "XY    "
+            };
+            con.Buffer.Should().BeEquivalentTo(expected);
+        }
 
         [Test]
         public void write_relative_to_the_window_being_printed_to_not_the_parent()
