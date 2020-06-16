@@ -6,8 +6,11 @@ namespace Konsole
     {
 
         public NullWriter()
+        {           
+        }
+
+        public void WriteLine(string text)
         {
-           
         }
 
         public void WriteLine(string format, params object[] args)
@@ -20,6 +23,11 @@ namespace Konsole
 
         public void Write(string format, params object[] args)
         {
+        }
+
+        public void Write(string text)
+        {
+
         }
 
         public void Write(ConsoleColor color, string format, params object[] args)
@@ -177,13 +185,19 @@ namespace Konsole
 
         public void MoveBufferArea(int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight, int targetLeft, int targetTop,
             char sourceChar, ConsoleColor sourceForeColor, ConsoleColor sourceBackColor)
-        {
-           
+        { 
         }
 
         private void SetCursorPosition(int x, int y)
         {
-            
+        }
+
+        public void Write(ConsoleColor color, string text)
+        {
+        }
+
+        public void WriteLine(ConsoleColor color, string text)
+        {
         }
     }
 }

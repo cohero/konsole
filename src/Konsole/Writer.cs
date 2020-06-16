@@ -13,6 +13,11 @@ namespace Konsole
             _isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         }
 
+        public void WriteLine(string text)
+        {
+            Console.WriteLine(text);
+        }
+
         public void WriteLine(string format, params object[] args)
         {
             Console.WriteLine(format, args);
@@ -32,6 +37,11 @@ namespace Konsole
             }
         }
 
+        public void Write(string text)
+        {
+            Console.Write(text);
+        }
+
         public void Write(string format, params object[] args)
         {
             Console.Write(format, args);
@@ -43,12 +53,41 @@ namespace Konsole
             try
             {
                 ForegroundColor = color;
-                Write(format, args);
+                Console.Write(format, args);
             }
             finally
             {
                 ForegroundColor = foreground;
             }
+        }
+
+        public void Write(ConsoleColor color, string text)
+        {
+            var foreground = ForegroundColor;
+            try
+            {
+                ForegroundColor = color;
+                Console.Write(text);
+            }
+            finally
+            {
+                ForegroundColor = foreground;
+            }
+        }
+
+        public void WriteLine(ConsoleColor color, string text)
+        {
+            var foreground = ForegroundColor;
+            try
+            {
+                ForegroundColor = color;
+                Console.WriteLine(text);
+            }
+            finally
+            {
+                ForegroundColor = foreground;
+            }
+
         }
 
 
@@ -178,7 +217,7 @@ namespace Konsole
             }
         }
 
-        // class written in response to issue #28 https://github.com/goblinfactory/konsole/issues/28 (Crash after window resize)
+        // method written in response to issue #28 https://github.com/goblinfactory/konsole/issues/28 (Crash after window resize)
         private static int CheckWidth(int x)
         {
             return x.Min(Console.WindowWidth, Console.BufferWidth);
@@ -194,7 +233,7 @@ namespace Konsole
         public void PrintAt(int x, int y, string text)
         {
             SetCursorPosition(CheckWidth(x), y);
-            Console.WriteLine(text);            
+            Console.Write(text);            
         }
         public void PrintAt(int x, int y, char c)
         {

@@ -41,11 +41,27 @@ namespace Konsole
             }
         }
 
+        public void WriteLine(string text)
+        {
+            lock (_locker)
+            {
+                _window.WriteLine(text);
+            }
+        }
+
         public void WriteLine(string format, params object[] args)
         {
             lock (_locker)
             {
                 _window.WriteLine(format,args);
+            }
+        }
+
+        public void WriteLine(ConsoleColor color, string text)
+        {
+            lock (_locker)
+            {
+                _window.WriteLine(color, text);
             }
         }
 
@@ -62,6 +78,22 @@ namespace Konsole
             lock (_locker)
             {
                 _window.Write(format,args);
+            }
+        }
+
+        public void Write(string text)
+        {
+            lock (_locker)
+            {
+                _window.Write(text);
+            }
+        }
+
+        public void Write(ConsoleColor color, string text)
+        {
+            lock (_locker)
+            {
+                _window.Write(color, text);
             }
         }
 
@@ -243,6 +275,5 @@ namespace Konsole
                 _window.MoveBufferArea(sourceLeft,sourceTop,sourceWidth,sourceHeight,targetLeft,targetTop,sourceChar,sourceForeColor,sourceBackColor);
             }
         }
-
     }
 }

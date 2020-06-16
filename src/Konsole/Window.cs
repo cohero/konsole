@@ -116,96 +116,11 @@ namespace Konsole
             return (Console.WindowWidth, Console.WindowHeight);
         };
 
-        public Window() : this(
-            0,
-            0,
-            GetHostWidthHeight().width,
-            GetHostWidthHeight().height,
-            ConsoleColor.White,
-            ConsoleColor.Black,
-            true, null
-            )
-        {
-        }
-
-        /// <summary>
-        /// Create a new window inline starting on the next line, at current `CursorTop + 1, using the specified width or the whole screen width if none is provided. Default color of White on Black.
-        /// </summary>
-        public Window(int width, int height, params K[] options)
-            : this(null, null, width, height, ConsoleColor.White, ConsoleColor.Black, true, null, options)
-        {
-        }
-
-        /// <summary>
-        /// Open a window Inline at the current cursorTop position, width and height wide and tall.  The parent's cursorTop is incremented so that it will continue to print underneath the newly created window. The constructor is threadsafe, so creating multiple windows will ensure they will not overlap. While the constructor is threadsafe, the returned instance is not. Calling any of the Split methods will return a threadsafe window based off this window. You can call .Concurrent() on the newly created window to return a ConcurrentWriter wrapping the window instance.
-        /// </summary>
-        /// <param name="width">The width of the window</param>
-        /// <param name="height">the height of the window</param>
-        /// <param name="foreground">Foreground color</param>
-        /// <param name="background">Background color</param>
-        public Window(int width, int height, ConsoleColor foreground, ConsoleColor background)
-            : this(null, null, width, height, foreground, background, true, null)
-        {
-        }
-
-        public Window(int width, int height, ConsoleColor foreground, ConsoleColor background, params K[] options)
-            : this(null, null, width, height, foreground, background, true, null, options)
-        {
-        }
-
-        public Window(IConsole console, int width, int height, ConsoleColor foreground, ConsoleColor background,
-            params K[] options)
-            : this(null, null, width, height, foreground, background, true, console, options)
-        {
-        }
-
-        public Window(IConsole echoConsole, int x, int y, int width, int height, ConsoleColor foreground,
-            ConsoleColor background)
-            : this(x, y, width, height, foreground, background, true, echoConsole)
-        {
-        }
-
-        public Window(IConsole console, int width, int height, params K[] options)
-    : this(null, null, width, height, ConsoleColor.White, ConsoleColor.Black, true, console, options)
-        {
-        }
-
-        public Window(IConsole echoConsole, int x, int y, int width, int height)
-            : this(x, y, width, height, ConsoleColor.White, ConsoleColor.Black, true, echoConsole)
-        {
-        }
-
-        public Window(IConsole echoConsole, int width, int height)
-            : this(null, null, width, height, echoConsole.BackgroundColor, echoConsole.ForegroundColor, true, echoConsole)
-        {
-        }
-
-        // TODO: fix the window constructors, second parameter is sometimes height, and sometimes not!
-        public Window(IConsole echoConsole, int height, ConsoleColor foreground, ConsoleColor background)
-    : this(null, null, echoConsole.WindowWidth, height, foreground, background, true, echoConsole)
-        {
-        }
-
-        //Window will clear the parent console area in the overlapping window.
-        // this constructor is safe to have params after IConsole because it's the only constructor that starts with IConsole, all other constructors have other strongly typed first parameter. (i.e. avoid parameter confusion)
-        public Window(IConsole echoConsole, params K[] options)
-            : this(0, 0, (int?)(null), (int?)null, ConsoleColor.White, ConsoleColor.Black, true, echoConsole, options)
-        {
-        }
-
-        public Window(int x, int y, int width, int height, IConsole echoConsole = null, params K[] options)
-            : this(x, y, width, height, ConsoleColor.White, ConsoleColor.Black, true, echoConsole, options)
-        {
-        }
-
-        protected Window(int x, int y, int width, int height, bool echo = true, IConsole echoConsole = null,
-            params K[] options)
-            : this(x, y, width, height, ConsoleColor.White, ConsoleColor.Black, echo, echoConsole, options)
-        {
-        }
-
         internal static object _staticLocker = new object();
 
+        /// <summary>
+        /// Opens a new Threadsafe window consisting the whole screen
+        /// </summary>
         public static IConsole Open()
         {
             return new Window().Concurrent();
@@ -250,17 +165,10 @@ namespace Konsole
             }
         }
 
-        public Window(int x, int y, int width, int height, ConsoleColor foreground, ConsoleColor background,
-            IConsole echoConsole, params K[] options)
-            : this(x, y, width, height, foreground, background, true, echoConsole, options)
+        protected Window(int x, int y, int width, int height, bool echo = true, IConsole echoConsole = null,
+    params K[] options)
+    : this(x, y, width, height, ConsoleColor.White, ConsoleColor.Black, echo, echoConsole, options)
         {
-
-        }
-
-        public Window(int x, int y, int width, int height, ConsoleColor foreground, ConsoleColor background,
-            params K[] options) : this(x, y, width, height, foreground, background, true, null, options)
-        {
-
         }
 
         internal static IConsole _CreateFloatingWindow(int? x, int? y, int? width, int? height, ConsoleColor foreground,
@@ -441,68 +349,6 @@ namespace Konsole
             }
         }
 
-        /// <summary>
-        /// Write the text to the window in the {color} color, withouting resetting the window's current foreground colour. Optionally causes text to wrap, and if text moves beyond the end of the window causes the window to scroll.
-        /// </summary>
-        public void WriteLine(ConsoleColor color, string format, params object[] args)
-        {
-            var foreground = ForegroundColor;
-            try
-            {
-                ForegroundColor = color;
-                WriteLine(format, args);
-            }
-            finally
-            {
-                ForegroundColor = foreground;
-            }
-        }
-
-        public void WriteLine(string format, params object[] args)
-        {
-            if (_clipping && OverflowBottom)
-            {
-                return;
-            }
-
-            if (OverflowBottom)
-            {
-                ScrollDown();
-                Write(format, args);
-                Cursor = new XY(0, Cursor.Y + 1);
-                return;
-            }
-
-            Write(format, args);
-            Cursor = new XY(0, Cursor.Y + 1);
-            if (OverflowBottom && !_clipping)
-            {
-                ScrollDown();
-            }
-
-        }
-
-        public void Write(ConsoleColor color, string format, params object[] args)
-        {
-            var foreground = ForegroundColor;
-            try
-            {
-                ForegroundColor = color;
-                Write(format, args);
-            }
-            finally
-            {
-                ForegroundColor = foreground;
-            }
-;
-        }
-
-        public void Write(string format, params object[] args)
-        {
-            var text = string.Format(format, args);
-            Write(text);
-        }
-
         public void Clear()
         {
             Clear(null);
@@ -527,11 +373,6 @@ namespace Konsole
 
         }
 
-        public void Write(string text)
-        {
-            _write(text);
-        }
-
         // scroll the screen up 1 line, and pop the top line off the buffer
         //NB!Need to test if this is cross platform ?
         public void ScrollDown()
@@ -547,44 +388,6 @@ namespace Konsole
                 _echoConsole.MoveBufferArea(_x, _y + 1, _width, _height - 1, _x, _y, ' ', ForegroundColor, BackgroundColor);
             }
         }
-
-
-
-        //TODO: convert everything to redirect all calls to PrintAt, so that writing to parent works flawlessly!
-        private void _write(string text)
-        {
-            if (_clipping && OverflowBottom)
-                return;
-            DoCommand(_echoConsole, () =>
-            {
-                var overflow = "";
-                while (overflow != null)
-                {
-                    if (!_lines.ContainsKey(Cursor.Y)) return;
-                    var result = _lines[Cursor.Y].WriteToRowBufferReturnWrittenAndOverflow(ForegroundColor, BackgroundColor, Cursor.X, text);
-                    overflow = result.Overflow;
-                    if (_echo && _echoConsole != null)
-                    {
-                        _echoConsole.ForegroundColor = ForegroundColor;
-                        _echoConsole.BackgroundColor = BackgroundColor;
-                        _echoConsole.PrintAt(CursorLeft + _x, CursorTop + _y, result.Written);
-                    }
-                    if (overflow == null)
-                    {
-                        Cursor = Cursor.IncX(text.Length);
-                    }
-                    else
-                    {
-                        Cursor = new XY(0, Cursor.Y + 1);
-                        if (_clipping && OverflowBottom) break;
-                        if (OverflowBottom)
-                            ScrollDown();
-                    }
-                    text = overflow;
-                }
-            });
-        }
-
 
         public int WindowHeight
         {

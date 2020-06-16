@@ -6,8 +6,37 @@ namespace Konsole.Tests.WindowTests
 {
     class WriteLineShould
     {
-
-
+        [Test]
+        public void when_writing_to_last_char_on_screen_move_cursor_forward_two_lines()
+        {
+            var con = new MockConsole(6, 4);
+            con.WriteLine("123456");
+            con.WriteLine("XY");
+            var expected = new[]
+            {
+                "123456",
+                "      ",
+                "XY    ",
+                "      "
+            };
+            con.Buffer.Should().BeEquivalentTo(expected);
+        }
+        [Test]
+        public void allow_embedded_interpolations_without_exception()
+        {
+            var con = new MockConsole(6, 4);
+            con.WriteLine("{0}");
+            con.WriteLine("{0}", "cat");
+            con.WriteLine("{json}");
+            var expected = new[]
+            {
+                "{0}   ",
+                "cat   ",
+                "{json}",
+                "      "
+            };
+            con.Buffer.Should().BeEquivalentTo(expected);
+        }
 
         [Test]
         public void write_relative_to_the_window_being_printed_to_not_the_parent()

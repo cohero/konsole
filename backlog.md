@@ -1,15 +1,53 @@
 # Roadmap
 
-## version 6
-
-- SplitLeft, SplitRight, SplitTop, SplitBottom, SplitColumns, SplitRows, to all use the same boxStyle as OpenBox.
-
 ## Busy now
 
+- add performance test artifact to build.
+- simple simple list view,  basically it's a menu item that can run keyboard event, no scrolling.
+
+## Now but paused
+
+- add badge to goblinfactory website.
+- faster drawbox (without this we cannot tab between active windows, just too slow)
+- OpenBOx without a border or title, so that you can quickly split Left Right.
+
+- window keyboard event handler, highlight current windows, allow you to open 3 different boxes and tab between them, typing pushes keystrokes to each window in turn, if that window has a ReadText, then that windows gets input, cursor set
+   to blink at that windows current position. Readtext should set cursor to readtext position.
+
+## Busy next
+- simple input, ReadLine()
+- support IObservable<T> in listView
+- create proper highspeedwriter interface that's used by the private highspeed writer, or App? so that the interface is real and not fakes.
+- write Mac HighSpeedWriter and test locally
+- update build to create new release and push package to nuget, and update package number when merge to master.
+- need to get box writer fast enough that when pressing tab, to move between active windows, I can show the active 
+  window by redrawing the window using a highlight theme, e.g. brightwhite double, versus single gray.
+- add `mdsnippets` to build script so that it's always up to date!
+- Window.OpenBox( ) to open box anywhere on screen.
+- SplitTop SplitBottom to use OpenBox syntax and defaults.
+- ability to open empty
+- when on mac and last line of screen, printing to below the last line does not casue the screen to scroll so that it extends. (this can probably be handled!) 
+  - this is needed because if you are on the last line and create a window, e.g. window.OpenBox("here", 10, 3), you only get a window 1 line high, instead of the screen scrolling on each new line.
+  - work around is to console.clear when starting a print on Mac. This only postpones the problem until printing gets back to the bottom again. (a proper fix is needed.)
+  - another workaround is to clear screen, and run a full console app, that scrolls inside the visible area using a highspeed writer.
+  - and nbench to build - automatically test performance : https://petabridge.com/blog/introduction-to-nbench/
+- ability to open with padded empty line around.
+- move documentation to seperate website (my blog) so that I can track traffic using Google Analytics.
+- high speed writer for Mac (experiment with highspeed writer for just a small window portion [region])
+- removed obsolete Open methods
+- remove Window.Open (check how folk have used and make sure I have all the correct overloads)
+- combine Konsole.Platform
+- make window serializable by default, so we can get rid of serializblewindow?
+- SplitLeft, SplitRight, SplitTop, SplitBottom, SplitColumns, SplitRows, to all use the same boxStyle as OpenBox.
+- faster box writer
+- test for when text overlaps multiple lines.
+- check 
+- add docs for BoxWriter
 - more manual testing.
 - do pull request and squash commits after a nice cleanup so that my commits can be easier to read.
 - OpenBox
 - list view :D
+- move .source.md files to seperate folder. (mdsnippets)
 - fix bug - when creating an inline window from an new ConcurrentWriter() IConsole the colors are wrong? See spike "paul".
 - NB! Set scrollable region (using VT100 commands!)
 - so that you can have input region at the bottom, and "app" at the top?
@@ -38,7 +76,7 @@ Alan Hemmings @goblinfactory 11:32
 
 
 ## busy next unsorted
-
+- addd copyright to top of all files, so that if cloned, that goblinfactory copyright is clearly visible, see Core.cs (Gui.cs) as an example.
 - have ability to show Konsole code running live in a gist, or workbook? tryDotNet ? 
 - change titles to make easier to read
 - add table of contents
